@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+//use Laravel\Fortify\TwoFactorAuthenticatable;
+// use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use Notifiable, HasRoles, SoftDeletes, HasApiTokens, HasFactory;
+    // use HasProfilePhoto;
+    //use TwoFactorAuthenticatable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'nid_dob',
+        'email',
+        'password',
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    // protected $appends = [
+    //     'profile_photo_url',
+    // ];
+
+    public function patient(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(PatientRegistration::class);
+    }
+
+    public function doctor(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Doctor::class);
+    }
+
+    public function appointments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function presctiption(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
+}
